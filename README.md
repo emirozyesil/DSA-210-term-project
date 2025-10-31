@@ -1,4 +1,4 @@
-# DSA-210-term-project
+# DSA-210-term-project Air Quality, Temperature, and Screen Time Correlation
 ## Project Motivation
 In recent years, people’s lifestyles have become increasingly influenced by both environmental and technological factors. Air quality and temperature are key environmental elements that affect how much time people spend outdoors or indoors. When air pollution levels rise or when temperatures become uncomfortable (too cold or too hot), individuals often tend to stay indoors, which can indirectly increase the amount of time they spend using digital devices. 
 

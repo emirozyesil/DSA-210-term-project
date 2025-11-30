@@ -1,23 +1,170 @@
-# DSA-210-term-project Air Quality, Temperature, and Screen Time Correlation
-## Project Motivation
-In recent years, people’s lifestyles have become increasingly influenced by both environmental and technological factors. Air quality and temperature are key environmental elements that affect how much time people spend outdoors or indoors. When air pollution levels rise or when temperatures become uncomfortable (too cold or too hot), individuals often tend to stay indoors, which can indirectly increase the amount of time they spend using digital devices. 
+# Factors Influencing Winning in Professional Basketball  
+### DSA210 – Fall 2025 Term Project
 
-I am personally curious about how these environmental conditions affect my own daily screen time. Specifically, I want to explore whether there is a measurable correlation between air quality (e.g., PM2.5 levels, overall Air Quality Index), weather conditions (temperature, humidity), and the duration of my daily screen use. This project will allow me to connect environmental data with behavioral patterns through data analysis and hypothesis testing.
+---
 
-My motivation is not only to test this relationship statistically but also to better understand my own habits in the context of environmental changes. If I can identify patterns such as “worse air quality → higher screen time,” it could reveal how much environmental comfort influences daily digital behavior. On a broader scale, similar analyses could provide insights into how environmental quality impacts human lifestyle, productivity, and mental well-being in urban settings.
+## 1. Introduction & Motivation
 
-Through this project, I also aim to practice the complete data science workflow — collecting, cleaning, merging, and analyzing real-world data — and to apply both descriptive and inferential statistical methods to generate meaningful conclusions from personal and public datasets.
+Basketball fans and analysts often talk about “momentum shifts”, “smart fouling”, and “modern 3-point heavy offenses”, but these are usually based on intuition rather than systematic evidence.  
 
-## Data Source
-- **Personal Data:** My own daily screen time, exported from my phone’s digital wellbeing/screen time report.  
-  - I will exclude extreme cases such as exam days or unusual circumstances (e.g., travel days, illness).
-- **Environmental Data:** Public air quality and weather data for **Tuzla, Istanbul**.  
-  - Air Quality data: [AQICN — Tuzla Station](https://aqicn.org/city/turkey/istanbul/tuzla/)  
-  - Weather data (temperature, humidity, etc.): [Open-Meteo API](https://open-meteo.com/) or [OpenAQ](https://openaq.org/)  
+This project aims to **quantitatively analyze which game statistics are most strongly associated with winning** in professional basketball, using data from the **NBA** and **EuroLeague**.  
 
-## Project Plan
-1. Collect my personal screen time data for a selected period (e.g., past 2–3 months).  
-2. Download daily air quality (AQI, PM2.5, PM10) and temperature data for the same dates.  
-3. Merge datasets on date and create a clean combined dataset.  
-4. Conduct exploratory data analysis (EDA) and simple statistical correlation tests.  
-5. Exclude outliers (exam days, abnormal cases) to ensure consistency.
+I will focus on three specific factors:
+
+1. **Third quarter scoring performance**  
+2. **Number of fouls committed**  
+3. **Shot selection strategy (2-point vs 3-point attempts)**  
+
+The goal is to move from anecdotal beliefs to **data-driven insights** about how teams actually play when they win.
+
+---
+
+## 2. Problem Definition
+
+The central question of this project is:
+
+> **Which aspects of in-game performance are most strongly associated with winning in professional basketball games?**
+
+To make this question concrete and measurable, I focus on:
+
+- Whether **3rd quarter point differential** is higher for winning teams  
+- Whether **foul counts** differ between winning and losing teams  
+- Whether **3-point attempt ratio** differs between winning and losing teams  
+
+These questions will be answered using **exploratory data analysis (EDA)** and **statistical hypothesis testing** on game-level data.
+
+---
+
+## 3. Research Questions & Hypotheses
+
+Below are the research questions and their formal hypotheses, written in statistical form with \(H_0\) and \(H_1\).
+
+Let:
+
+- \( Q3\_diff \) = team’s points in Q3 − opponent’s points in Q3  
+- \( \text{Fouls} \) = total team fouls in the game  
+- \( 3PA \) = three-point field goal attempts  
+- \( 2PA \) = two-point field goal attempts  
+- \( \text{3PA Ratio} = \dfrac{3PA}{2PA + 3PA} \)  
+- Subscripts **win** and **lose** refer to the group of games where the team won or lost.
+
+---
+
+### RQ1 — 3rd Quarter Performance
+
+**Research Question 1:**  
+> Do winning teams have a different average 3rd quarter point differential compared to losing teams?
+
+**Hypotheses:**
+
+- **H0 (Q3):**  
+  The mean 3rd quarter point differential is the same for winning and losing teams.  
+  \[
+  \mu_{\text{win}}^{Q3\_diff} = \mu_{\text{lose}}^{Q3\_diff}
+  \]
+
+- **H1 (Q3):**  
+  The mean 3rd quarter point differential is different for winning and losing teams.  
+  \[
+  \mu_{\text{win}}^{Q3\_diff} \neq \mu_{\text{lose}}^{Q3\_diff}
+  \]
+
+---
+
+### RQ2 — Fouls and Game Outcome
+
+**Research Question 2:**  
+> Do teams that commit more fouls tend to win or lose, or is there no meaningful difference?
+
+I will study both **total fouls** and **foul differential** (home vs away).
+
+#### 2.1 Total Fouls (Team Level)
+
+- **H0 (Fouls-Total):**  
+  The mean total number of fouls is the same for winning and losing teams.  
+  \[
+  \mu_{\text{win}}^{Fouls} = \mu_{\text{lose}}^{Fouls}
+  \]
+
+- **H1 (Fouls-Total):**  
+  The mean total number of fouls is different for winning and losing teams.  
+  \[
+  \mu_{\text{win}}^{Fouls} \neq \mu_{\text{lose}}^{Fouls}
+  \]
+
+#### 2.2 Foul Differential (Optional, Home vs Away)
+
+Let \( Foul\_diff = Fouls_{home} - Fouls_{away} \).
+
+- **H0 (Fouls-Diff):**  
+  The distribution of foul differential does not differ between games won and lost by the home team.  
+  \[
+  \mu_{\text{home\_win}}^{Foul\_diff} = \mu_{\text{home\_lose}}^{Foul\_diff}
+  \]
+
+- **H1 (Fouls-Diff):**  
+  The foul differential is different between games won and lost by the home team.  
+  \[
+  \mu_{\text{home\_win}}^{Foul\_diff} \neq \mu_{\text{home\_lose}}^{Foul\_diff}
+  \]
+
+---
+
+### RQ3 — Shot Selection: 2-Point vs 3-Point Attempts
+
+**Research Question 3:**  
+> Do winning teams have a different shot selection profile, specifically in terms of 3-point attempt ratio, compared to losing teams?
+
+I will use the **3-point attempt ratio** as a measure of shot selection:
+
+\[
+\text{3PA Ratio} = \frac{3PA}{2PA + 3PA}
+\]
+
+**Hypotheses:**
+
+- **H0 (3PA Ratio):**  
+  The mean 3-point attempt ratio is the same for winning and losing teams.  
+  \[
+  \mu_{\text{win}}^{3PA\ Ratio} = \mu_{\text{lose}}^{3PA\ Ratio}
+  \]
+
+- **H1 (3PA Ratio):**  
+  The mean 3-point attempt ratio is different for winning and losing teams.  
+  \[
+  \mu_{\text{win}}^{3PA\ Ratio} \neq \mu_{\text{lose}}^{3PA\ Ratio}
+  \]
+
+These hypotheses will be tested separately for NBA and EuroLeague if the datasets allow.
+
+---
+
+## 4. Data Source
+
+I will use **publicly available Kaggle datasets** that contain NBA and EuroLeague game statistics. Examples include (exact links will be added later):
+
+- NBA regular season and/or playoff box score datasets  
+- EuroLeague game-level statistics datasets  
+
+Typical variables available in these datasets:
+
+- Game metadata: season, date, game ID, home/away teams  
+- Final scores and winner/loser  
+- Points scored per quarter (Q1, Q2, Q3, Q4)  
+- Fouls committed, free throws  
+- Field goal attempts and makes (2PA, 3PA, FGA, FG%)  
+
+### Data Enrichment (Required for Public Data)
+
+Because the data is public, I will **enrich it with additional features**, such as:
+
+- Third quarter point differential: `Q3_diff`  
+- Final score differential: `final_margin`  
+- Total fouls for each team and foul differential: `Fouls_home`, `Fouls_away`, `Foul_diff`  
+- 3PA ratio for each team: `3PA_ratio = 3PA / (2PA + 3PA)`  
+- Binary indicators: `win`, `home_win`, `close_game` (e.g., |final_margin| ≤ 5)  
+
+Raw data will be stored in:
+
+```text
+data/raw/

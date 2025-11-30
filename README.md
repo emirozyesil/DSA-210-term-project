@@ -1,170 +1,154 @@
-# Factors Influencing Winning in Professional Basketball  
-### DSA210 – Fall 2025 Term Project
+# DSA210 Term Project  
+## Factors Influencing Winning in Professional Basketball
 
 ---
 
-## 1. Introduction & Motivation
+## 1. Project Overview
 
-Basketball fans and analysts often talk about “momentum shifts”, “smart fouling”, and “modern 3-point heavy offenses”, but these are usually based on intuition rather than systematic evidence.  
+This project investigates **which in-game factors most strongly influence the likelihood of winning NBA basketball games**. Using real match data and player box scores, the goal is to determine whether specific statistics—such as third-quarter performance, total fouls committed, and shot selection patterns—have a significant and measurable impact on game outcomes.
 
-This project aims to **quantitatively analyze which game statistics are most strongly associated with winning** in professional basketball, using data from the **NBA** and **EuroLeague**.  
-
-I will focus on three specific factors:
-
-1. **Third quarter scoring performance**  
-2. **Number of fouls committed**  
-3. **Shot selection strategy (2-point vs 3-point attempts)**  
-
-The goal is to move from anecdotal beliefs to **data-driven insights** about how teams actually play when they win.
+To achieve this, game-level information from NBA match results is combined with player-level box score data. These datasets are cleaned, merged, and enriched to create a unified analytical table suitable for statistical analysis and hypothesis testing.
 
 ---
 
-## 2. Problem Definition
+## 2. Research Questions & Hypotheses
 
-The central question of this project is:
+Below are the key questions this project aims to answer. Each includes a clear null hypothesis (H₀) and an alternative hypothesis (H₁), expressed verbally (no symbolic formulas).
 
-> **Which aspects of in-game performance are most strongly associated with winning in professional basketball games?**
+### **RQ1 — Third Quarter Performance**
+**Question:**  
+Do winning teams generally perform better in the third quarter compared to losing teams?
 
-To make this question concrete and measurable, I focus on:
+- **H₀ (Null):**  
+  There is no meaningful difference in third-quarter point differential between winning and losing teams.
 
-- Whether **3rd quarter point differential** is higher for winning teams  
-- Whether **foul counts** differ between winning and losing teams  
-- Whether **3-point attempt ratio** differs between winning and losing teams  
-
-These questions will be answered using **exploratory data analysis (EDA)** and **statistical hypothesis testing** on game-level data.
-
----
-
-## 3. Research Questions & Hypotheses
-
-Below are the research questions and their formal hypotheses, written in statistical form with \(H_0\) and \(H_1\).
-
-Let:
-
-- \( Q3\_diff \) = team’s points in Q3 − opponent’s points in Q3  
-- \( \text{Fouls} \) = total team fouls in the game  
-- \( 3PA \) = three-point field goal attempts  
-- \( 2PA \) = two-point field goal attempts  
-- \( \text{3PA Ratio} = \dfrac{3PA}{2PA + 3PA} \)  
-- Subscripts **win** and **lose** refer to the group of games where the team won or lost.
+- **H₁ (Alternative):**  
+  Third-quarter point differential differs between winning and losing teams.
 
 ---
 
-### RQ1 — 3rd Quarter Performance
+### **RQ2 — Fouls and Winning**
+**Question:**  
+Do teams that commit more or fewer fouls tend to win more often?
 
-**Research Question 1:**  
-> Do winning teams have a different average 3rd quarter point differential compared to losing teams?
+- **H₀ (Null):**  
+  Winning and losing teams commit, on average, the same number of fouls.
 
-**Hypotheses:**
-
-- **H0 (Q3):**  
-  The mean 3rd quarter point differential is the same for winning and losing teams.  
-  \[
-  \mu_{\text{win}}^{Q3\_diff} = \mu_{\text{lose}}^{Q3\_diff}
-  \]
-
-- **H1 (Q3):**  
-  The mean 3rd quarter point differential is different for winning and losing teams.  
-  \[
-  \mu_{\text{win}}^{Q3\_diff} \neq \mu_{\text{lose}}^{Q3\_diff}
-  \]
+- **H₁ (Alternative):**  
+  Winning and losing teams commit a different number of fouls on average.
 
 ---
 
-### RQ2 — Fouls and Game Outcome
+### **RQ3 — Shot Selection (3PA Ratio)**
+**Question:**  
+Does attempting more three-point shots relative to two-point shots influence a team’s chances of winning?
 
-**Research Question 2:**  
-> Do teams that commit more fouls tend to win or lose, or is there no meaningful difference?
+- **H₀ (Null):**  
+  Winning and losing teams have similar three-point attempt ratios.
 
-I will study both **total fouls** and **foul differential** (home vs away).
-
-#### 2.1 Total Fouls (Team Level)
-
-- **H0 (Fouls-Total):**  
-  The mean total number of fouls is the same for winning and losing teams.  
-  \[
-  \mu_{\text{win}}^{Fouls} = \mu_{\text{lose}}^{Fouls}
-  \]
-
-- **H1 (Fouls-Total):**  
-  The mean total number of fouls is different for winning and losing teams.  
-  \[
-  \mu_{\text{win}}^{Fouls} \neq \mu_{\text{lose}}^{Fouls}
-  \]
-
-#### 2.2 Foul Differential (Optional, Home vs Away)
-
-Let \( Foul\_diff = Fouls_{home} - Fouls_{away} \).
-
-- **H0 (Fouls-Diff):**  
-  The distribution of foul differential does not differ between games won and lost by the home team.  
-  \[
-  \mu_{\text{home\_win}}^{Foul\_diff} = \mu_{\text{home\_lose}}^{Foul\_diff}
-  \]
-
-- **H1 (Fouls-Diff):**  
-  The foul differential is different between games won and lost by the home team.  
-  \[
-  \mu_{\text{home\_win}}^{Foul\_diff} \neq \mu_{\text{home\_lose}}^{Foul\_diff}
-  \]
+- **H₁ (Alternative):**  
+  The three-point attempt ratio differs between winning and losing teams.
 
 ---
 
-### RQ3 — Shot Selection: 2-Point vs 3-Point Attempts
+## 3. Data Sources
 
-**Research Question 3:**  
-> Do winning teams have a different shot selection profile, specifically in terms of 3-point attempt ratio, compared to losing teams?
-
-I will use the **3-point attempt ratio** as a measure of shot selection:
-
-\[
-\text{3PA Ratio} = \frac{3PA}{2PA + 3PA}
-\]
-
-**Hypotheses:**
-
-- **H0 (3PA Ratio):**  
-  The mean 3-point attempt ratio is the same for winning and losing teams.  
-  \[
-  \mu_{\text{win}}^{3PA\ Ratio} = \mu_{\text{lose}}^{3PA\ Ratio}
-  \]
-
-- **H1 (3PA Ratio):**  
-  The mean 3-point attempt ratio is different for winning and losing teams.  
-  \[
-  \mu_{\text{win}}^{3PA\ Ratio} \neq \mu_{\text{lose}}^{3PA\ Ratio}
-  \]
-
-These hypotheses will be tested separately for NBA and EuroLeague if the datasets allow.
+Two public Kaggle datasets are used to build the enriched game-level dataset.
 
 ---
 
-## 4. Data Source
+### **Dataset 1 — NBA Match Results (1949–2024)**  
+**Author:** joybiswas389  
+**Link:** https://www.kaggle.com/datasets/joybiswas389/nba-matches-results-1949-2024  
 
-I will use **publicly available Kaggle datasets** that contain NBA and EuroLeague game statistics. Examples include (exact links will be added later):
+**Purpose:**  
+Provides match-level information including team names, final scores, quarter-by-quarter scoring, and game outcomes.
 
-- NBA regular season and/or playoff box score datasets  
-- EuroLeague game-level statistics datasets  
+**Key variables used:**
+- Team names  
+- Final scores  
+- Quarter scores (Q1–Q4)  
+- Game outcome  
+- Match metadata  
 
-Typical variables available in these datasets:
+**Contribution to project:**  
+Allows computation of variables such as:
+- third-quarter point differential  
+- final score margin  
+- win indicator  
+- close-game flag  
 
-- Game metadata: season, date, game ID, home/away teams  
-- Final scores and winner/loser  
-- Points scored per quarter (Q1, Q2, Q3, Q4)  
-- Fouls committed, free throws  
-- Field goal attempts and makes (2PA, 3PA, FGA, FG%)  
+---
 
-### Data Enrichment (Required for Public Data)
+### **Dataset 2 — Historical NBA Data and Player Box Scores**  
+**Author:** eoinamoore  
+**Link:** https://www.kaggle.com/datasets/eoinamoore/historical-nba-data-and-player-box-scores  
 
-Because the data is public, I will **enrich it with additional features**, such as:
+**Purpose:**  
+Provides player-level box scores that can be aggregated into team-level statistics for each game.
 
-- Third quarter point differential: `Q3_diff`  
-- Final score differential: `final_margin`  
-- Total fouls for each team and foul differential: `Fouls_home`, `Fouls_away`, `Foul_diff`  
-- 3PA ratio for each team: `3PA_ratio = 3PA / (2PA + 3PA)`  
-- Binary indicators: `win`, `home_win`, `close_game` (e.g., |final_margin| ≤ 5)  
+**Key variables used:**
+- Field goal attempts (FGA)  
+- Three-point attempts (3PA)  
+- Personal fouls (PF)  
+- Points and other box score metrics  
 
-Raw data will be stored in:
+**Contribution to project:**  
+By aggregating player statistics on a per-team, per-game basis, the following enriched variables can be constructed:
+- team total fouls  
+- team total 3PA and 2PA  
+- team-level 3PA ratio  
+- foul differential between teams  
+- team shooting profile metrics  
 
-```text
-data/raw/
+---
+
+## 4. Data Enrichment
+
+Because the datasets are public, custom enrichment is essential.  
+The project constructs additional features not directly provided by the raw datasets.
+
+### **Match-level engineered features (from Dataset 1):**
+- **final_margin:** difference between team and opponent final scores  
+- **win:** binary indicator of victory  
+- **Q3_diff:** third-quarter point differential  
+- **close_game:** whether the final margin is within 5 points  
+
+### **Team-game-level engineered features (aggregated from Dataset 2):**
+- **team_total_fouls:** sum of player fouls for each team in a game  
+- **team_total_3PA:** total three-point attempts  
+- **team_total_2PA:** computed as FGA minus 3PA  
+- **3PA_ratio:** proportion of 3-point attempts relative to all field goal attempts  
+- **Foul_diff:** difference in fouls between the two teams in a game  
+
+These enriched features form the basis of the statistical comparisons and hypothesis tests.
+
+---
+
+## 5. Exploratory Data Analysis (EDA)
+
+To understand the behavior of the enriched variables, the project includes:
+
+- Summary statistics for major variables (Q3_diff, fouls, 3PA ratio, final margin)  
+- Histograms and distributions  
+- Boxplots comparing winners and losers  
+- Correlation matrix and heatmap  
+- Scatterplots showing relationships between key variables and scoring margins  
+
+EDA helps reveal early patterns and guides the choice of statistical methods.
+
+---
+
+## 6. Hypothesis Testing
+
+For each research question, statistical tests are applied to assess whether differences between winning and losing teams are statistically meaningful.  
+
+Tests include:
+- Two-sample t-tests  
+- Normality and variance checks  
+- Non-parametric alternatives where needed (e.g., Mann–Whitney U test)
+
+These analyses evaluate whether third-quarter performance, total fouls, and shot selection are significantly associated with winning outcomes.
+
+---
+

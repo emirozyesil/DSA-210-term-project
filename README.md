@@ -201,32 +201,116 @@ This step connects exploratory insights with formal statistical evidence.
 
 ---
 
-## 8. Machine Learning: Win Prediction
+## 8. Machine Learning Analysis
 
-To complement statistical testing, a supervised learning approach was applied.
+The purpose of the machine learning stage is not only to predict game outcomes, but also
+to **quantify how strongly each in-game factor contributes to winning**.
+While hypothesis tests evaluate variables individually, machine learning allows us to
+observe their combined effect in a predictive setting.
 
-### Objective
-Predict game outcome (`win`) using engineered in-game features.
+### Problem Definition
+The task is formulated as a **binary classification problem**:
+- **Target variable:** `win` (1 = win, 0 = loss)
 
-### Features Used
-- Q3_diff  
-- Foul_diff  
-- threePA_ratio  
-- home  
-- close_game  
+This setup allows us to examine whether engineered in-game features can jointly explain
+and predict game outcomes.
 
-### Modeling Approach
-- Train-test split (80% / 20%), stratified by outcome  
-- Logistic Regression with StandardScaler pipeline  
-- Evaluation metrics:
-  - Accuracy  
-  - Confusion matrix  
-  - Classification report  
+---
 
-### Interpretability
-- Logistic regression coefficients were extracted and visualized  
-- Feature importance analysis revealed:
-  - **Third-quarter point differential** as the strongest positive predictor of winning  
+### Feature Selection Rationale
+
+The following features were selected based on insights from EDA and hypothesis testing:
+
+- **Q3_diff**  
+  Captures third-quarter momentum, which is often considered a turning point in games.
+- **Foul_diff**  
+  Represents physical discipline and free-throw opportunities.
+- **threePA_ratio**  
+  Reflects offensive shot selection strategy.
+- **home**  
+  Accounts for home-court advantage.
+- **close_game**  
+  Controls for high-variance situations where outcomes may be less predictable.
+
+These features are interpretable, game-related, and directly linked to the research questions.
+
+---
+
+### Train–Test Split
+
+To evaluate generalization performance, the dataset was split into:
+- **80% training data**
+- **20% test data**
+
+Stratified sampling was used to preserve the win–loss distribution in both subsets.
+This prevents biased evaluation caused by class imbalance.
+
+---
+
+### Model Choice: Logistic Regression
+
+Logistic Regression was selected as the baseline model for three main reasons:
+
+1. **Interpretability**  
+   The model provides coefficients that directly indicate the direction and magnitude
+   of each feature’s effect on winning probability.
+
+2. **Statistical consistency**  
+   Logistic Regression aligns well with the hypothesis-testing framework already applied
+   earlier in the project.
+
+3. **Simplicity and robustness**  
+   It serves as a strong baseline before introducing more complex models.
+
+Feature scaling was applied using a `StandardScaler` within a pipeline to ensure
+numerical stability and fair coefficient comparison.
+
+---
+
+### Model Evaluation
+
+The model was evaluated on the held-out test set using:
+- Accuracy
+- Confusion matrix
+- Precision, recall, and F1-score
+
+The Logistic Regression model achieved an accuracy of approximately **68.5%**,
+indicating that the selected in-game features contain meaningful predictive information
+about game outcomes.
+
+---
+
+### Model Interpretation
+
+To understand *why* the model makes its predictions, logistic regression coefficients
+were extracted and analyzed.
+
+Key observations:
+- **Q3_diff** has the strongest positive coefficient, confirming that outperforming the
+  opponent in the third quarter substantially increases winning probability.
+- **Home-court advantage** also contributes positively, consistent with prior basketball
+  literature.
+- **Foul_diff** shows a negative association, suggesting that committing more fouls than
+  the opponent may reduce winning chances.
+- **threePA_ratio** exhibits a smaller but noticeable effect, indicating that shot
+  selection alone is not sufficient but still relevant.
+
+These findings are consistent with the earlier EDA and hypothesis testing results,
+providing cross-validation across analytical methods.
+
+---
+
+### Summary of Machine Learning Insights
+
+The machine learning analysis confirms that:
+- Third-quarter performance is the most influential factor in determining NBA game outcomes.
+- Winning is best explained by a **combination** of momentum, discipline, and context
+  rather than a single statistic.
+- Simple, interpretable models can provide strong explanatory power when paired with
+  thoughtful feature engineering.
+
+Overall, machine learning complements statistical testing by demonstrating how multiple
+in-game factors interact to shape winning probabilities.
 
 ---
 
@@ -245,9 +329,18 @@ Processed datasets are saved to ensure reproducibility and clarity.
 
 ## 10. Conclusion
 
-This project demonstrates that **when advantages are created during the game matters as much as how large they are**. Third-quarter dominance, disciplined play, and strategic shot selection all show meaningful relationships with winning outcomes.
+This study set out to understand **which in-game factors most strongly influence winning in NBA basketball** by combining data enrichment, exploratory analysis, hypothesis testing, and machine learning.
 
-By combining data enrichment, exploratory analysis, hypothesis testing, and machine learning, the project provides both **statistical evidence** and **predictive insight** into the dynamics of professional basketball games.
+The results consistently point to **third-quarter performance** as the most critical determinant of game outcomes. Both statistical tests and machine learning models show that teams gaining an advantage in the third quarter significantly increase their probability of winning. This highlights the importance of mid-game momentum, adjustments made after halftime, and execution during the early second half.
+
+Foul-related variables provide additional insight. While fouls alone do not determine outcomes, committing more fouls than the opponent is generally associated with lower winning probability. This suggests that discipline and avoiding unnecessary fouls can indirectly impact game results by affecting free-throw opportunities and defensive stability.
+
+Shot selection, measured through the three-point attempt ratio, shows a more nuanced relationship with winning. While higher reliance on three-point shooting is not a guaranteed path to victory, it remains a meaningful contextual factor that interacts with other aspects of team performance rather than acting independently.
+
+From a modeling perspective, the machine learning analysis confirms that **winning is best explained by a combination of factors rather than any single statistic**. Logistic Regression demonstrates that interpretable models, when paired with carefully engineered features, can provide both predictive power and clear insights into game dynamics.
+
+Overall, this project demonstrates that **when advantages are created during a game matters as much as how large those advantages are**. Teams that control the third quarter, maintain discipline, and apply balanced offensive strategies are more likely to secure wins. The integrated analytical approach used in this study provides a structured framework for understanding basketball performance beyond final scores and offers a foundation for future extensions using more advanced models or play-by-play data.
+
 
 
 ## Use of AI Tools

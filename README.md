@@ -1,154 +1,250 @@
 # DSA210 Term Project  
-## Factors Influencing Winning in Professional Basketball
+## Factors Influencing Winning in Professional Basketball (NBA)
 
 ---
 
-## 1. Project Overview
+## 1. Project Proposal & Motivation
 
-This project investigates **which in-game factors most strongly influence the likelihood of winning NBA basketball games**. Using real match data and player box scores, the goal is to determine whether specific statistics—such as third-quarter performance, total fouls committed, and shot selection patterns—have a significant and measurable impact on game outcomes.
+Winning an NBA game is the outcome of many interacting in-game factors. While the final score determines the winner, *how* that score is achieved throughout the game is often overlooked. In particular, momentum shifts, shot selection strategies, and physicality (fouls) may play a decisive role in determining game outcomes.
 
-To achieve this, game-level information from NBA match results is combined with player-level box score data. These datasets are cleaned, merged, and enriched to create a unified analytical table suitable for statistical analysis and hypothesis testing.
+The purpose of this project is to **identify which in-game performance factors are most strongly associated with winning NBA games**, using real historical data. Rather than focusing only on final scores, this project emphasizes *when* and *how* advantages are created during the game.
+
+This project is original in its **focus on third-quarter performance**, **foul imbalance**, and **shot selection patterns**, and in how these factors are jointly analyzed using **data enrichment, hypothesis testing, and machine learning**.
 
 ---
 
 ## 2. Research Questions & Hypotheses
 
-Below are the key questions this project aims to answer. Each includes a clear null hypothesis (H₀) and an alternative hypothesis (H₁), expressed verbally (no symbolic formulas).
-
-### **RQ1 — Third Quarter Performance**
-**Question:**  
-Do winning teams generally perform better in the third quarter compared to losing teams?
-
-- **H₀ (Null):**  
-  There is no meaningful difference in third-quarter point differential between winning and losing teams.
-
-- **H₁ (Alternative):**  
-  Third-quarter point differential differs between winning and losing teams.
+The analysis is structured around three main research questions.  
+Each question is associated with a clear null hypothesis (H₀) and alternative hypothesis (H₁), expressed verbally.
 
 ---
 
-### **RQ2 — Fouls and Winning**
-**Question:**  
-Do teams that commit more or fewer fouls tend to win more often?
+### RQ1 — Third Quarter Performance
 
-- **H₀ (Null):**  
+**Research Question:**  
+Do teams that perform better in the third quarter have a higher probability of winning?
+
+- **H₀ (Null Hypothesis):**  
+  There is no meaningful difference in third-quarter point differential between winning and losing teams.
+
+- **H₁ (Alternative Hypothesis):**  
+  Winning and losing teams differ in their third-quarter point differential.
+
+---
+
+### RQ2 — Fouls and Winning
+
+**Research Question:**  
+Does committing more or fewer fouls influence a team’s likelihood of winning?
+
+- **H₀ (Null Hypothesis):**  
   Winning and losing teams commit, on average, the same number of fouls.
 
-- **H₁ (Alternative):**  
+- **H₁ (Alternative Hypothesis):**  
   Winning and losing teams commit a different number of fouls on average.
 
 ---
 
-### **RQ3 — Shot Selection (3PA Ratio)**
-**Question:**  
-Does attempting more three-point shots relative to two-point shots influence a team’s chances of winning?
+### RQ3 — Shot Selection (Three-Point Attempt Ratio)
 
-- **H₀ (Null):**  
+**Research Question:**  
+Does a team’s preference for three-point shots relative to two-point shots affect winning probability?
+
+- **H₀ (Null Hypothesis):**  
   Winning and losing teams have similar three-point attempt ratios.
 
-- **H₁ (Alternative):**  
+- **H₁ (Alternative Hypothesis):**  
   The three-point attempt ratio differs between winning and losing teams.
 
 ---
 
 ## 3. Data Sources
 
-Two public Kaggle datasets are used to build the enriched game-level dataset.
+This project uses **two publicly available Kaggle datasets**, selected to enable both game-level and team-level analysis.
 
 ---
 
-### **Dataset 1 — NBA Match Results (1949–2024)**  
-**Author:** joybiswas389  
-**Link:** https://www.kaggle.com/datasets/joybiswas389/nba-matches-results-1949-2024  
+### Dataset 1 — NBA Match Results (1949–2024)
 
-**Purpose:**  
-Provides match-level information including team names, final scores, quarter-by-quarter scoring, and game outcomes.
+- **Author:** joybiswas389  
+- **Link:** https://www.kaggle.com/datasets/joybiswas389/nba-matches-results-1949-2024  
+
+**Description:**  
+Provides match-level information including final scores, quarter-by-quarter scoring, and game outcomes.
 
 **Key variables used:**
 - Team names  
 - Final scores  
 - Quarter scores (Q1–Q4)  
-- Game outcome  
-- Match metadata  
+- Game outcomes  
 
-**Contribution to project:**  
-Allows computation of variables such as:
-- third-quarter point differential  
-- final score margin  
-- win indicator  
-- close-game flag  
+**Role in project:**  
+Used to compute:
+- Win indicator  
+- Final score margin  
+- Third-quarter point differential  
+- Close-game indicator  
 
 ---
 
-### **Dataset 2 — Historical NBA Data and Player Box Scores**  
-**Author:** eoinamoore  
-**Link:** https://www.kaggle.com/datasets/eoinamoore/historical-nba-data-and-player-box-scores  
+### Dataset 2 — Historical NBA Data and Player Box Scores
 
-**Purpose:**  
-Provides player-level box scores that can be aggregated into team-level statistics for each game.
+- **Author:** eoinamoore  
+- **Link:** https://www.kaggle.com/datasets/eoinamoore/historical-nba-data-and-player-box-scores  
+
+**Description:**  
+Contains player-level box score data for NBA games.
 
 **Key variables used:**
 - Field goal attempts (FGA)  
 - Three-point attempts (3PA)  
 - Personal fouls (PF)  
-- Points and other box score metrics  
 
-**Contribution to project:**  
-By aggregating player statistics on a per-team, per-game basis, the following enriched variables can be constructed:
-- team total fouls  
-- team total 3PA and 2PA  
-- team-level 3PA ratio  
-- foul differential between teams  
-- team shooting profile metrics  
+**Role in project:**  
+Player-level statistics are aggregated to the team-game level to construct:
+- Total team fouls  
+- Total three-point attempts  
+- Two-point attempts  
+- Shot selection ratios  
 
 ---
 
-## 4. Data Enrichment
+## 4. Data Cleaning & Preprocessing
 
-Because the datasets are public, custom enrichment is essential.  
-The project constructs additional features not directly provided by the raw datasets.
+Before analysis, several preprocessing steps were applied:
 
-### **Match-level engineered features (from Dataset 1):**
-- **final_margin:** difference between team and opponent final scores  
-- **win:** binary indicator of victory  
-- **Q3_diff:** third-quarter point differential  
-- **close_game:** whether the final margin is within 5 points  
+- Converted game timestamps to proper datetime format  
+- Standardized team name strings (uppercase, trimmed whitespace)  
+- Verified data consistency using:
+  - `df.info()`  
+  - `df.isna().sum()`  
+- Ensured compatibility for dataset merging and self-joins  
 
-### **Team-game-level engineered features (aggregated from Dataset 2):**
-- **team_total_fouls:** sum of player fouls for each team in a game  
-- **team_total_3PA:** total three-point attempts  
-- **team_total_2PA:** computed as FGA minus 3PA  
-- **3PA_ratio:** proportion of 3-point attempts relative to all field goal attempts  
-- **Foul_diff:** difference in fouls between the two teams in a game  
-
-These enriched features form the basis of the statistical comparisons and hypothesis tests.
+These steps ensured data reliability and prevented key mismatches during enrichment.
 
 ---
 
-## 5. Exploratory Data Analysis (EDA)
+## 5. Data Enrichment (Feature Engineering)
 
-To understand the behavior of the enriched variables, the project includes:
-
-- Summary statistics for major variables (Q3_diff, fouls, 3PA ratio, final margin)  
-- Histograms and distributions  
-- Boxplots comparing winners and losers  
-- Correlation matrix and heatmap  
-- Scatterplots showing relationships between key variables and scoring margins  
-
-EDA helps reveal early patterns and guides the choice of statistical methods.
+Because the raw datasets do not directly contain all variables needed for analysis, several **custom features** were engineered.
 
 ---
 
-## 6. Hypothesis Testing
+### Match-Level Engineered Features
 
-For each research question, statistical tests are applied to assess whether differences between winning and losing teams are statistically meaningful.  
+- **final_margin:**  
+  Difference between team and opponent final scores  
 
-Tests include:
-- Two-sample t-tests  
+- **win:**  
+  Binary outcome (1 = win, 0 = loss)  
+
+- **Q3_diff:**  
+  Third-quarter point differential (team − opponent)  
+
+- **close_game:**  
+  Indicator for games decided by 5 points or fewer  
+
+---
+
+### Team-Level Engineered Features
+
+- **team_total_fouls:**  
+  Sum of player fouls per team per game  
+
+- **team_total_3PA:**  
+  Total three-point attempts  
+
+- **team_total_2PA:**  
+  Computed as `FGA − 3PA`  
+
+- **threePA_ratio:**  
+  Proportion of three-point attempts among all shot attempts  
+
+- **Foul_diff:**  
+  Difference between team fouls and opponent fouls  
+
+These features transform raw statistics into analytically meaningful indicators of strategy, discipline, and momentum.
+
+---
+
+## 6. Exploratory Data Analysis (EDA)
+
+EDA was used to explore distributions, relationships, and potential predictive signals:
+
+- Team-level win rate visualization  
+- Boxplots comparing winners vs losers for:
+  - Q3_diff  
+  - Foul_diff  
+  - threePA_ratio  
+- Distribution analysis for close games  
+- Summary statistics and correlation inspection  
+
+EDA guided the choice of hypothesis tests and informed feature selection for modeling.
+
+---
+
+## 7. Hypothesis Testing
+
+To formally evaluate the research questions, statistical hypothesis tests were conducted.
+
+**Methods used:**
+- Two-sample t-tests for mean comparison  
 - Normality and variance checks  
-- Non-parametric alternatives where needed (e.g., Mann–Whitney U test)
+- Mann–Whitney U tests where parametric assumptions were violated  
 
-These analyses evaluate whether third-quarter performance, total fouls, and shot selection are significantly associated with winning outcomes.
+**Interpretation:**
+- P-values were compared against α = 0.05  
+- Results were interpreted in the context of basketball dynamics rather than purely statistical significance  
+
+This step connects exploratory insights with formal statistical evidence.
 
 ---
 
+## 8. Machine Learning: Win Prediction
+
+To complement statistical testing, a supervised learning approach was applied.
+
+### Objective
+Predict game outcome (`win`) using engineered in-game features.
+
+### Features Used
+- Q3_diff  
+- Foul_diff  
+- threePA_ratio  
+- home  
+- close_game  
+
+### Modeling Approach
+- Train-test split (80% / 20%), stratified by outcome  
+- Logistic Regression with StandardScaler pipeline  
+- Evaluation metrics:
+  - Accuracy  
+  - Confusion matrix  
+  - Classification report  
+
+### Interpretability
+- Logistic regression coefficients were extracted and visualized  
+- Feature importance analysis revealed:
+  - **Third-quarter point differential** as the strongest positive predictor of winning  
+
+---
+
+## 9. Project Structure & Reproducibility
+
+Notebooks are organized sequentially and can be run end-to-end:
+
+1. `01_data_cleaning_enrichment.ipynb`  
+2. `02_exploratory_data_analysis.ipynb`  
+3. `03_hypothesis_testing.ipynb`  
+4. `04_machine_learning_models.ipynb`  
+
+Processed datasets are saved to ensure reproducibility and clarity.
+
+---
+
+## 10. Conclusion
+
+This project demonstrates that **when advantages are created during the game matters as much as how large they are**. Third-quarter dominance, disciplined play, and strategic shot selection all show meaningful relationships with winning outcomes.
+
+By combining data enrichment, exploratory analysis, hypothesis testing, and machine learning, the project provides both **statistical evidence** and **predictive insight** into the dynamics of professional basketball games.

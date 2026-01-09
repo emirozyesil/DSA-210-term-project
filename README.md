@@ -248,3 +248,11 @@ Processed datasets are saved to ensure reproducibility and clarity.
 This project demonstrates that **when advantages are created during the game matters as much as how large they are**. Third-quarter dominance, disciplined play, and strategic shot selection all show meaningful relationships with winning outcomes.
 
 By combining data enrichment, exploratory analysis, hypothesis testing, and machine learning, the project provides both **statistical evidence** and **predictive insight** into the dynamics of professional basketball games.
+
+
+## Use of AI Tools
+
+AI-based tools (including large language models) were used to assist with
+some of code structuring, and improving clarity of explanations.
+
+
